@@ -45,11 +45,15 @@ async function handleRequest(request) {
   }
   const isDockerHub = upstream == dockerHub;
   const authorization = request.headers.get("Authorization");
+  const x_amz_content_sha256 = request.headers.get("X-Amz-Content-Sha256");
   if (url.pathname == "/v2/") {
     const newUrl = new URL(upstream + "/v2/");
     const headers = new Headers();
     if (authorization) {
       headers.set("Authorization", authorization);
+    }
+    if (x_amz_content_sha256) {
+      headers.set("X-Amz-Content-Sha256", x_amz_content_sha256);
     }
     // check if need to authenticate
     const resp = await fetch(newUrl.toString(), {
